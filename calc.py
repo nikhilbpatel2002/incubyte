@@ -6,9 +6,9 @@ def split(str):
     try :
         for ch in str:
             if (ch==',' or ch== '\n'):
-                if (int(num)>=0):
+                if (int(num)>=0 and int(num)<=1000):
                     arr.append(int(num))
-                else :
+                elif (int(num)<0) :
                     narr.append(int(num))
                 num=""
             else :
@@ -44,6 +44,28 @@ def splitByAnyCharacter(str,c) :
     return arr 
 
 
+def splitAny(str,delimiter, k):
+    arr=[]
+    num=""
+    try :
+        # print(delimiter)
+        flag=False
+        for i in range (k,len(str)):
+            if (str[i]<'0' or str[i]>'9') :  
+                if flag :
+                    arr.append(int(num))
+                num=""
+                flag=False
+
+            else :
+                flag=True
+                num = num + str[i]
+        arr.append(int(num))
+    except :
+        print("splitAny :- Unexpected String or delimiters")
+    
+    return arr 
+
 
 
 def add(str):
@@ -54,8 +76,23 @@ def add(str):
         
         if str[0] != '/' :
             arr = split(str) 
-        elif(str[0]=='/'):
-            arr = splitByAnyCharacter(str,str[2])
+        elif(str[0]=='/' and str[1]=='/'):
+            if(str[3]=='\n'):
+                arr = splitByAnyCharacter(str,str[2])
+            elif (str[2]=='['):
+                k=3
+                delimiter = []        # store all delimiter
+                while(str[k]!='\n'):
+                    s=""
+                    while(str[k]!=']'):
+                        s= s + str[k]
+                        k= k+1 
+                    k= k+1 
+                    delimiter.append(s)
+                arr = splitAny(str,delimiter,k+1)
+
+
+                
 
 
         sm=0
@@ -85,6 +122,18 @@ def test():
     add("//#\n11#25#46#4")
     #negative number
     add("1,-23,34,54")
+
+    #Numbers bigger than 1000 should be ignored
+    add("1,2,1001,5")
+
+    # Delimiters can be of any length
+    add("//[***]\n1***2***3")
+
+    # Allow multiple delimiters
+    add("//[*][%]\n1*2%3")
+
+    # multiple delimiters with length longer than one char
+    add("//[*][%%]\n1*5%%3")
 
 
 test()
